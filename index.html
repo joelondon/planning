@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Planning Data Map</title>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <!--     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-beta/css/bootstrap.min.css"> -->
+
+    <!-- Optional theme -->
+    <!--     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css"> -->
+
+    <link
+      type="text/css"
+      rel="stylesheet"
+      href="//unpkg.com/bootstrap/dist/css/bootstrap.min.css"
+    />
+    <link
+      type="text/css"
+      rel="stylesheet"
+      href="//unpkg.com/bootstrap-vue@2.13.1/dist/bootstrap-vue.min.css"
+    />
+
+    <script src="//unpkg.com/@babel/polyfill@latest/dist/polyfill.min.js"></script>
+
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.2.0/dist/leaflet.css"
+    />
+
+    <!--     <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script> -->
+    <!--     <script src="https://code.jquery.com/ui/1.11.4/jquery-ui.min.js"></script> -->
+
+    <!-- Latest compiled and minified JavaScript -->
+    <!--     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script> -->
+
+    <!-- Minified version of `es6-promise-auto` polyfill -->
+    <script src="https://cdn.jsdelivr.net/npm/es6-promise@4/dist/es6-promise.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/es6-promise@4/dist/es6-promise.auto.min.js"></script>
+
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+    <!--   Dev vs Live versions of Vue   -->
+    <!--     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script> -->
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+
+    <script src="//unpkg.com/bootstrap-vue@2.13.1/dist/bootstrap-vue.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/vue-awesome@3.4.0/dist/vue-awesome.min.js"></script>
+
+    <script src="https://unpkg.com/leaflet@1.2.0/dist/leaflet.js"></script>
+
+    <!-- Load Esri Leaflet from CDN -->
+    <script src="https://unpkg.com/esri-leaflet/dist/esri-leaflet.js"></script>
+
+    <!-- Esri Leaflet Geocoder from CDN -->
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/esri-leaflet-geocoder/dist/esri-leaflet-geocoder.css"
+    />
+    <script src="https://unpkg.com/esri-leaflet-geocoder"></script>
+
+    <!-- JS for https://github.com/jgravois/bootstrap-geocoder -->
+    <script src="js/libs/bootstrap-geocoder.js"></script>
+
+    <!--  leaflet marker cluster  -->
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet.markercluster@1.3.0/dist/MarkerCluster.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet.markercluster@1.3.0/dist/MarkerCluster.Default.css"
+    />
+    <script src="https://unpkg.com/leaflet.markercluster@1.3.0/dist/leaflet.markercluster.js"></script>
+
+    <!--  esri cluster  -->
+    <script src="https://unpkg.com/esri-leaflet-cluster@2.0.0/dist/esri-leaflet-cluster.js"></script>
+
+    <!-- leafelt/cluster sub plugin for cluster/uncluster -->
+    <script src="https://unpkg.com/leaflet.markercluster.freezable@1.0.0/dist/leaflet.markercluster.freezable.js"></script>
+
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/pretty-checkbox@3.0/dist/pretty-checkbox.min.css"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/pretty-checkbox-vue@1.1/dist/pretty-checkbox-vue.min.js"></script>
+    <script>
+      Vue.use(PrettyCheckbox)
+    </script>
+
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/vue-range-slider@0.6.0/dist/vue-range-slider.css"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/vue-range-slider@0.6.0/dist/vue-range-slider.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.11/lodash.min.js"></script>
+
+    <!-- type -->
+    <link
+      href="//fonts.googleapis.com/css?family=Roboto:300,400,400i,500,700"
+      rel="stylesheet"
+    />
+
+    <!-- GULP BUILD FOR BROWSER TIMESTAMP TO REPLACE CACHE -->
+    <link rel="stylesheet" href="css/style.css?release=1623418353034">
+
+    <!-- GULP BUILD FOR REPOINTING TO BABELIFIED STATIC FILE AND ADD BROWSER TIMESTAMP TO REPLACE CACHE -->
+    <script src="js/app.js?release=1623418353034" defer></script>
+  </head>
+  <body>
+    <div
+      id="app"
+      v-bind:class="{ 'pointSearch': appState.isPointSearch, 'polygonSearch': appState.isPolygonSearch}"
+    >
+      <div class="map" id="map"></div>
+
+      <layer-more-info v-bind:modalstate="layerInfoModal"></layer-more-info>
+
+      <point-search-dialog
+        v-if="appState.appInit"
+        v-bind:pointsearchstate="pointSearchModal"
+        v-on:active-changed="layerActiveChanged"
+      ></point-search-dialog>
+
+      <div id="legendPopup"></div>
+
+      <div id="additionalMapControls">
+        <b-link href="#" v-on:click="refreshMap"
+          ><icon name="redo-alt" scale="1.5"></icon
+        ></b-link>
+        <b-link href="#" v-if="appState.isEmbed" v-on:click="expandToParent"
+          ><icon name="expand" scale="1.5"></icon
+        ></b-link>
+      </div>
+
+      <div id="mapPanelOuter" v-bind:class="{ panelOpen: appState.panelOpen }">
+        <div id="geocode">
+          <label>Search near a location:</label>
+          <input id="address-search" placeholder="e.g. enter your postcode" />
+        </div>
+
+        <div id="mapPanel" v-if="appState.appInit">
+          <div id="panelToggle">
+            <div id="panelToggleBtn">
+              <b-link href="#" v-on:click="togglePanelOpen">
+                <div class="vertical">
+                  <icon name="chevron-up" class="icon-open" scale="1.5"></icon>
+                  <icon
+                    name="chevron-down"
+                    class="icon-close"
+                    scale="1.5"
+                  ></icon>
+                </div>
+                <div class="horizontal">
+                  <icon
+                    name="chevron-left"
+                    class="icon-open"
+                    scale="1.5"
+                  ></icon>
+                  <icon
+                    name="chevron-right"
+                    class="icon-close"
+                    scale="1.5"
+                  ></icon>
+                </div>
+              </b-link>
+            </div>
+          </div>
+          <div class="mapPanel_head">
+            <div id="infoLinkHolder">
+              <b-link v-on:click="appRequestMoreInfo()"
+                ><icon name="iconInfo" scale="2"></icon
+              ></b-link>
+            </div>
+            <h2 class="headline">PLANNING DATA MAP</h2>
+            <p class="info">
+              This open planning data map for London contains the latest spatial
+              data about planning policy. <br />Let us know how you think it
+              might be improved or expanded:
+              <a href="mailto:ldd@london.gov.uk?subject=Planning data map"
+                >ldd@london.gov.uk</a
+              >
+            </p>
+          </div>
+          <div class="mapPanel_nav">
+            <div class="panelRow">
+              <div id="groupsNav" class="buttonGroup-4">
+                <!--     <div class="buttonGroupItem" v-bind:class="{ selected: appState.selectedNavGroup == 'commercial' }"><b-link v-on:click="navGroupSelected('commercial')"><icon name="iconCommercial" scale="3"></icon><span class="navGroupLabel">Commercial</span></b-link></div> -->
+                <div
+                  class="buttonGroupItem"
+                  v-bind:class="{ selected: appState.selectedNavGroup == 'protection' }"
+                >
+                  <b-link v-on:click="navGroupSelected('protection')"
+                    ><icon name="iconEnvironment" scale="3"></icon
+                    ><span class="navGroupLabel">Protection</span></b-link
+                  >
+                </div>
+                <div
+                  class="buttonGroupItem"
+                  v-bind:class="{ selected: appState.selectedNavGroup == 'good-growth' }"
+                >
+                  <b-link v-on:click="navGroupSelected('good-growth')"
+                    ><icon name="iconHousing" scale="3"></icon
+                    ><span class="navGroupLabel">Good Growth</span></b-link
+                  >
+                </div>
+                <div
+                  class="buttonGroupItem"
+                  v-bind:class="{ selected: appState.selectedNavGroup == 'councils' }"
+                >
+                  <b-link v-on:click="navGroupSelected('councils')"
+                    ><icon name="iconHousing" scale="3"></icon
+                    ><span class="navGroupLabel">Councils</span></b-link
+                  >
+                </div>
+                <div
+                  class="buttonGroupItem"
+                  v-bind:class="{ selected: appState.selectedNavGroup == 'context' }"
+                >
+                  <b-link v-on:click="navGroupSelected('context')"
+                    ><icon name="iconContext" scale="3"></icon
+                    ><span class="navGroupLabel">Context</span></b-link
+                  >
+                </div>
+              </div>
+              <!--                       <div class="clearFloat"></div> -->
+            </div>
+          </div>
+          <div class="mapPanel_content" v-on:scroll="panelContentScrollEvent">
+            <div class="panelRow">
+              <!--               v-if="selectedLayerGroup == 'actions'" -->
+              <layer-group-control
+                v-for="layerGroup in orderedLayerGroups"
+                v-if="layerGroup.navGroup == appState.selectedNavGroup"
+                v-bind:key="layerGroup.id"
+                v-bind:layergroup="layerGroup"
+                v-on:active-changed="layerActiveChanged"
+                v-on:cluster-changed="layerClusterChanged"
+                v-on:request-more-info="layerRequestMoreInfo"
+                v-on:request-group-more-info="layerRequestGroupMoreInfo"
+                v-on:opacity-changed="layerOpacityChanged"
+                v-on:group-active-changed="layerGroupActiveChanged"
+              ></layer-group-control>
+              <!--                       <div class="clearFloat"></div> -->
+            </div>
+
+            <div class="panelRow">
+              <button
+                id="pointSearchToggleBtn"
+                v-on:click="pointSearchToggle"
+                type="button"
+                style="display: inline-block;"
+                v-bind:class="{ active: appState.isPointSearch }"
+              >
+                <icon name="iconPointSearch" scale="1"></icon
+                ><span v-if="appState.isPointSearch">End Location Search</span
+                ><span v-else>Find Layers & Sites by Location</span>
+              </button>
+              <span class="helperText" v-if="appState.isPointSearch"
+                >Hint: Click the map to find sites within layers at that
+                point.</span
+              >
+            </div>
+
+            <div class="panelRow">
+              <button
+                id="radiusSearchToggleBtn"
+                v-on:click="radiusSearchToggle"
+                type="button"
+                style="display: inline-block;"
+                v-bind:class="{ active: appState.isPolygonSearch }"
+              >
+                <icon name="iconRadiusSearch" scale="1"></icon>
+                <span v-if="appState.isPolygonSearch">
+                  End Radius Search
+                  <span v-if="appState.radiusSearchEnd.distanceM"
+                    >(Searching: ~{{ appState.radiusSearchEnd.distanceM
+                    }}M)</span
+                  >
+                </span>
+                <span v-else-if="app.searchPolygon != null">
+                  Clear Radius Search (~{{ appState.radiusSearchEnd.distanceM
+                  }}M)
+                </span>
+                <span v-else>
+                  Begin Radius Search
+                </span>
+              </button>
+              <!--               <button id="radiusSearchClearBtn" v-on:click="radiusSearchClear" type="button" style="display: inline-block;" v-if="{ active: appState.isPolygonSearch }">
+                <icon name="iconPointSearch" scale="1"></icon>
+                <span >Clear Radius Search</span>
+              </button>
+               -->
+              <span class="helperText" v-if="appState.isPolygonSearch"
+                >Hint: Click down and drag to create a search radius.<br />Mobile:
+                Tap location to begin ~{{appSettings.radiusSearchMobileMaxM}}M
+                radius search.</span
+              >
+            </div>
+          </div>
+          <div class="mapPanel_footer">
+            <div id="footerLeft">
+              <div id="footerAboutHolder">
+                <b-link
+                  a
+                  href="https://data.london.gov.uk/dataset?q=&tag=planningconstraintsmap"
+                  target="_blank"
+                  ><icon name="arrow-circle-down" scale="1"></icon> Download
+                  Planning Data</b-link
+                >
+              </div>
+            </div>
+            <div id="footerRight"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- /app -->
+  </body>
+</html>
