@@ -24,9 +24,15 @@
 
     <script src="//unpkg.com/@babel/polyfill@latest/dist/polyfill.min.js"></script>
 
+    <!--     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.2.0/dist/leaflet.css"> -->
     <link
       rel="stylesheet"
-      href="https://unpkg.com/leaflet@1.2.0/dist/leaflet.css"
+      href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+    />
+    <!-- OS Vector Tile CSS -->
+    <link
+      rel="stylesheet"
+      href="https://api.tiles.mapbox.com/mapbox-gl-js/v1.13.0/mapbox-gl.css"
     />
 
     <!--     <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script> -->
@@ -49,17 +55,22 @@
 
     <script src="https://cdn.jsdelivr.net/npm/vue-awesome@3.4.0/dist/vue-awesome.min.js"></script>
 
-    <script src="https://unpkg.com/leaflet@1.2.0/dist/leaflet.js"></script>
-
+    <!--     <script src="https://unpkg.com/leaflet@1.2.0/dist/leaflet.js"></script> -->
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <!-- OS Vector Tile JS -->
+    <script src="https://api.tiles.mapbox.com/mapbox-gl-js/v1.13.0/mapbox-gl.js"></script>
+    <script src="https://unpkg.com/mapbox-gl-leaflet/leaflet-mapbox-gl.js"></script>
     <!-- Load Esri Leaflet from CDN -->
     <script src="https://unpkg.com/esri-leaflet/dist/esri-leaflet.js"></script>
 
     <!-- Esri Leaflet Geocoder from CDN -->
+    <!--     <link rel="stylesheet" href="https://unpkg.com/esri-leaflet-geocoder/dist/esri-leaflet-geocoder.css">
+    <script src="https://unpkg.com/esri-leaflet-geocoder"></script> -->
     <link
       rel="stylesheet"
-      href="https://unpkg.com/esri-leaflet-geocoder/dist/esri-leaflet-geocoder.css"
+      href="https://unpkg.com/esri-leaflet-geocoder@2.3.4/dist/esri-leaflet-geocoder.css"
     />
-    <script src="https://unpkg.com/esri-leaflet-geocoder"></script>
+    <script src="https://unpkg.com/esri-leaflet-geocoder@2.3.4/dist/esri-leaflet-geocoder.js"></script>
 
     <!-- JS for https://github.com/jgravois/bootstrap-geocoder -->
     <script src="js/libs/bootstrap-geocoder.js"></script>
@@ -105,10 +116,10 @@
     />
 
     <!-- GULP BUILD FOR BROWSER TIMESTAMP TO REPLACE CACHE -->
-    <link rel="stylesheet" href="css/style.css?release=1623418542364">
+    <link rel="stylesheet" href="css/style.css?release=1623679026230">
 
     <!-- GULP BUILD FOR REPOINTING TO BABELIFIED STATIC FILE AND ADD BROWSER TIMESTAMP TO REPLACE CACHE -->
-    <script src="js/app.js?release=1623418542364" defer></script>
+    <script src="js/app.js?release=1623679026230" defer></script>
   </head>
   <body>
     <div
@@ -175,13 +186,14 @@
                 ><icon name="iconInfo" scale="2"></icon
               ></b-link>
             </div>
-            <h2 class="headline">PLANNING DATA MAP</h2>
+            <h2 class="headline">PLANNING DATAMAP</h2>
             <p class="info">
               This open planning data map for London contains the latest spatial
               data about planning policy. <br />Let us know how you think it
               might be improved or expanded:
-              <a href="mailto:ldd@london.gov.uk?subject=Planning data map"
-                >ldd@london.gov.uk</a
+              <a
+                href="mailto:planningdata@london.gov.uk?subject=Planning data map"
+                >planningdata@london.gov.uk</a
               >
             </p>
           </div>
@@ -212,7 +224,7 @@
                   v-bind:class="{ selected: appState.selectedNavGroup == 'councils' }"
                 >
                   <b-link v-on:click="navGroupSelected('councils')"
-                    ><icon name="iconHousing" scale="3"></icon
+                    ><icon name="iconCouncils" scale="3"></icon
                     ><span class="navGroupLabel">Councils</span></b-link
                   >
                 </div>
