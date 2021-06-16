@@ -1060,15 +1060,15 @@ var app = new Vue({
       navGroupOrder: 0,
       active: true,
       layers: [{
-        id: 301,
+        id: 2,
         type: 'shape',
         name: 'city-of-london',
         displayName: 'City of London',
         shortDescription: 'Conservation areas',
         longDescription: 'Conservation areas',
         z: 5,
-        url: 'https://gis.london.gov.uk/arcgis/rest/services/apps/planning_data_map_local_plan_01/MapServer/2',
-        appendIDtoURL: false,
+        url: 'https://gis.london.gov.uk/arcgis/rest/services/apps/planning_data_map_local_plan_01/MapServer/',
+        appendIDtoURL: true,
         active: true,
         opacity: 0.7,
         userControl: true,
@@ -1086,15 +1086,15 @@ var app = new Vue({
       navGroupOrder: 0,
       active: true,
       layers: [{
-        id: 302,
+        id: 4,
         type: 'shape',
         name: 'richmond',
         displayName: 'Richmond',
         shortDescription: 'Conservation areas',
-        longDescription: 'Conservations areas',
+        longDescription: 'Conservation areas',
         z: 5,
-        url: 'https://gis.london.gov.uk/arcgis/rest/services/apps/planning_data_map_local_plan_01/MapServer/4',
-        appendIDtoURL: false,
+        url: 'https://gis.london.gov.uk/arcgis/rest/services/apps/planning_data_map_local_plan_01/MapServer/',
+        appendIDtoURL: true,
         active: true,
         opacity: 0.7,
         userControl: true,
@@ -1315,7 +1315,7 @@ var app = new Vue({
       groupDisplayName: 'London Basemaps',
       navGroup: 'context',
       navGroupOrder: 15,
-      active: true, // if a single layer group, or if inner (multiple) layers are active, set to true
+      active: false, // if a single layer group, or if inner (multiple) layers are active, set to true
       layers: [{
         id: 1,
         type: 'os-vector-tile',
@@ -1327,7 +1327,7 @@ var app = new Vue({
         // url: 'https://api.os.uk/maps/vector/v1/vts', // new OS Vector Tile api (2021)
         apiKey: 'vmRzM4mAA1Ag0hkjGh1fhA2hNLEM6PYP',
         customStyleUrl: 'data/OS_VTS_3857_Open_Greyscale.json',
-        active: false, //false,
+        active: false,
         userControl: true,
         radioGroup: 'basemaps',
         layerObject: null
@@ -1342,7 +1342,7 @@ var app = new Vue({
         // url: 'https://api.os.uk/maps/vector/v1/vts', // new OS Vector Tile api (2021)
         apiKey: 'vmRzM4mAA1Ag0hkjGh1fhA2hNLEM6PYP',
         customStyleUrl: 'data/OS_VTS_3857_Open_GLA_Dark_Greyscale_GLA_Muted_Buildings.json',
-        active: true, //true,
+        active: false,
         userControl: true,
         radioGroup: 'basemaps',
         layerObject: null
