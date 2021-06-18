@@ -2,6 +2,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 Vue.component('icon', VueAwesome);
 Vue.component('range-slider', VueRangeSlider);
+Vue.component('v-swatches', ['vue-swatches']);
+Vue.component('slider-picker', VueColor.Slider);
 
 Vue.component('layer-group-control', {
   props: ['layergroup'],
@@ -9,6 +11,10 @@ Vue.component('layer-group-control', {
     return {
       aVar: 'example'
     };
+  },
+  components: {
+    VSwatches: window['vue-swatches'],
+    Slider: window['slider-picker']
   },
   methods: {
     activeChanged: function activeChanged(lyrgrp, lyr) {
@@ -19,6 +25,17 @@ Vue.component('layer-group-control', {
     },
     opacityChanged: function opacityChanged(lyr) {
       this.$emit('opacity-changed', lyr);
+    },
+    colorChanged: function colorChanged(layer, value) {
+      this.$emit('color-changed', layer, value);
+    },
+    colorChangedSlide: function colorChangedSlide(layer, value) {
+      var _this = this;
+
+      clearTimeout(timeout);
+      timeout = setTimeout(function () {
+        _this.$emit('color-changed', layer, value.hex);
+      }, 250);
     },
     requestMoreInfo: function requestMoreInfo(lyr) {
       this.$emit('request-more-info', lyr);
@@ -52,7 +69,7 @@ Vue.component('layer-group-control', {
   // + '<div v-if="layergroup.shortDescription" class="shortDescription"><span>Hello</span></div>'
   '<div v-for="layer in layergroup.layers" v-bind:class="{ grouped: layergroup.layers.length>1 }">' + '<div v-if="layer.userControl" class="layer-control" v-bind:class="layer.name">' + '<div class="layer-control-head">' + '<p-check v-model="layer.active" @change="activeChanged(layergroup,layer)" class="p-default p-round p-fill" v-bind:class="layer.name"></p-check>' +
   // + '<p-input type="radio" v-bind:name="layergroup.group" v-model="layer.active" @change="activeChanged(layergroup,layer)" class="p-default p-round p-fill" v-bind:class="layer.name"></p-input>'
-  '<b-link href="#" v-b-toggle="\'accTab_\' + layer.id" variant="info"><span v-html="layer.displayName"></span> <icon name="angle-down"></icon></b-link>' + '</div>' + '<b-collapse v-bind:visible="layer.id == app.appSettings.initPanelOpen_layerID ? true : false" v-bind:id="\'accTab_\' + layer.id" accordion="layers-accordion" role="tabpanel" class="control-content">' + '<div v-if="layer.shortDescription" class="shortDescription"><span v-html="layer.shortDescription"></span><span v-if="(layer.longDescription && layer.longDescription !=\'\')">.. <b-link @click="requestMoreInfo(layer)">Read More <icon name="info-circle" scale="1"></icon></b-link></span></div>' + '<div v-if="layer.type==\'point\'" class="cluster-container"><p-check v-model="layer.clustered" @change="clusterChanged(layer)" class="p-default p-round p-thick" v-bind:class="layer.name"><span class="labelText">Cluster Points</span></p-check></div>' + '<div v-if="layer.legendData" class="tileLegendContainer"><div class="legendTitle"><span v-if="layer.esriLegendTitle">{{layer.esriLegendTitle}}</span><span v-else>Legend:</span></div><div class="legendScale"><div class="legendItem" v-for="(legendItem, index) in layer.legendData"><div class="legendItemSymbol" v-bind:style="legendItem.style" @mouseover="legendRollover(legendItem)" @mouseout="legendRollout()"></div><div class="legendItemLabel"><span v-if="(index == 0) || (index <= layer.legendData.length-1)">{{ legendItem.label }}</span></div></div></div><div class="clearFloat"></div></div>' + '<div v-if="layer.opacity!=null" class="range-slider-group"><label class="range-slider-label">Adjust Transparency:</label><div class="range-slider-container"><range-slider class="slider" min="0.00" max="1" step="0.1" v-model="layer.opacity" @change="opacityChanged(layer)"></range-slider></div></div>' + '<div class="clearFloat"></div>' + '</b-collapse>' + '</div>' + '</div>' + '</b-collapse>' + '</div>'
+  '<b-link href="#" v-b-toggle="\'accTab_\' + layer.id" variant="info"><span v-html="layer.displayName"></span> <icon name="angle-down"></icon></b-link>' + '</div>' + '<b-collapse v-bind:visible="layer.id == app.appSettings.initPanelOpen_layerID ? true : false" v-bind:id="\'accTab_\' + layer.id" accordion="layers-accordion" role="tabpanel" class="control-content">' + '<div v-if="layer.shortDescription" class="shortDescription"><span v-html="layer.shortDescription"></span><span v-if="(layer.longDescription && layer.longDescription !=\'\')">.. <b-link @click="requestMoreInfo(layer)">Read More <icon name="info-circle" scale="1"></icon></b-link></span></div>' + '<div v-if="layer.type==\'point\'" class="cluster-container"><p-check v-model="layer.clustered" @change="clusterChanged(layer)" class="p-default p-round p-thick" v-bind:class="layer.name"><span class="labelText">Cluster Points</span></p-check></div>' + '<div v-if="layer.legendData" class="tileLegendContainer"><div class="legendTitle"><span v-if="layer.esriLegendTitle">{{layer.esriLegendTitle}}</span><span v-else>Legend:</span></div><div class="legendScale"><div class="legendItem" v-for="(legendItem, index) in layer.legendData"><div class="legendItemSymbol" v-bind:style="legendItem.style" @mouseover="legendRollover(legendItem)" @mouseout="legendRollout()"></div><div class="legendItemLabel"><span v-if="(index == 0) || (index <= layer.legendData.length-1)">{{ legendItem.label }}</span></div></div></div><div class="clearFloat"></div></div>' + '<div v-if="layer.opacity!=null" class="range-slider-group"><label class="range-slider-label">Adjust Transparency:</label><div class="range-slider-container"><range-slider class="slider" min="0.00" max="1" step="0.1" v-model="layer.opacity" @change="opacityChanged(layer)"></range-slider></div></div>' + '<div v-if="layer.color!=null" class="range-slider-group"><label class="range-slider-label">Adjust Colour:</label><div class="range-slider-container"><v-swatches v-model="layer.color" shapes="circles" show-border popover-x="left" @input="colorChanged(layer, ...arguments)"></v-swatches></div></div>' + '<div v-if="layer.color!=null" class="range-slider-group"><label class="range-slider-label">Adjust Colour:</label><div class="range-slider-container"><slider-picker v-model="colors" @input="colorChangedSlide(layer, ...arguments)" /></div></div>' + '<div class="clearFloat"></div>' + '</b-collapse>' + '</div>' + '</div>' + '</b-collapse>' + '</div>'
 });
 
 Vue.component('layer-more-info', {
@@ -95,6 +112,16 @@ Vue.component('point-search-dialog', {
   // + '<div v-else></div>'
   '</template>' + '</b-modal>'
 });
+
+var colors = {
+  hex: '#194d33',
+  hex8: '#194D33A8',
+  hsl: { h: 150, s: 0.5, l: 0.2, a: 1 },
+  hsv: { h: 150, s: 0.66, v: 0.3, a: 1 },
+  rgba: { r: 25, g: 77, b: 51, a: 1 },
+  a: 1
+};
+var timeout = 250;
 
 var app = new Vue({
   el: '#app',
@@ -257,38 +284,7 @@ var app = new Vue({
       }
     },
 
-    layerGroups: [
-    // good growth layers:
-    // {
-    //   id:0,
-    //   group: 'test-layer',
-    //   groupDisplayName: 'test',
-    //   navGroup: 'good-growth',
-    //   navGroupOrder: 0,
-    //   active: false,
-    //   layers: [
-    //     {
-    //       id: 0,
-    //       type: 'shape',
-    //       name: 'test-layer',
-    //       displayName: 'Test',
-    //       shortDescription: 'Test',
-    //       longDescription: '',
-    //       z: 1,
-    //       url: 'https://maps.london.gov.uk/gla/rest/services/apps/planning_data_map_test/MapServer/',
-    //       appendIDtoURL: true,
-    //       active: false,
-    //       opacity: 0.5,
-    //       userControl: true,
-    //       popup: '<p><strong>Test Layer:</strong> <br /> {sitename}</p>',
-    //       clickCustomFunction: true,
-    //       clickZoomToFeature: false,
-    //       pointSearchable: false,
-    //       layerObject: null
-    //     }
-    //   ]
-    // },
-    {
+    layerGroups: [{
       id: 101,
       group: 'brownfield-land',
       groupDisplayName: 'Brownfield Land Registers',
@@ -1062,7 +1058,7 @@ var app = new Vue({
       layers: [{
         id: 2,
         type: 'shape',
-        name: 'city-of-london',
+        name: 'city-of-london-conservation',
         displayName: 'City of London',
         shortDescription: 'Conservation areas',
         longDescription: 'Conservation areas',
@@ -1070,7 +1066,8 @@ var app = new Vue({
         url: 'https://gis.london.gov.uk/arcgis/rest/services/apps/planning_data_map_local_plan_01/MapServer/',
         appendIDtoURL: true,
         active: true,
-        opacity: 0.7,
+        color: '#ffffff',
+        opacity: 1,
         userControl: true,
         popup: '<p><strong>{designation}:</strong><br>{sitename}</p>',
         clickCustomFunction: true,
@@ -1088,7 +1085,7 @@ var app = new Vue({
       layers: [{
         id: 4,
         type: 'shape',
-        name: 'richmond',
+        name: 'richmond-conservation',
         displayName: 'Richmond',
         shortDescription: 'Conservation areas',
         longDescription: 'Conservation areas',
@@ -1096,7 +1093,8 @@ var app = new Vue({
         url: 'https://gis.london.gov.uk/arcgis/rest/services/apps/planning_data_map_local_plan_01/MapServer/',
         appendIDtoURL: true,
         active: true,
-        opacity: 0.7,
+        color: '#ffffff',
+        opacity: 1,
         userControl: true,
         popup: '<p><strong>{designation}:</strong><br>{sitename}</p>',
         clickCustomFunction: true,
@@ -1605,7 +1603,7 @@ var app = new Vue({
       this.appState.appInit = true;
     },
     initLayers: function initLayers() {
-      var _this = this;
+      var _this2 = this;
 
       // setup layer to parent group references
       this.setLayersParentGroup();
@@ -1622,60 +1620,20 @@ var app = new Vue({
           // using arrow here to keep app scope for this
 
           switch (layer.name) {
-            //           case "air-quality-monitoring-sites":
-            //             var markerHtmlStyle = 'background-image: url(images/marker-generic2.svg); background-repeat: no-repeat background-size: contain;';
-            //             this.leafletMap.createPane(layer.name);
-            //             this.leafletMap.getPane(layer.name).style.zIndex = this.appSettings.customPointZBase + layer.z;
-            //             layer.layerObject = L.esri.Cluster.featureLayer({
-            //               clusterPane: layer.name,
-            //               url: layer.url,
-            //               singleMarkerMode: false, // false to prevent single item clusters
-            //               disableClusteringAtZoom: 14,
-            //               pointToLayer: function (geojson, latlng) {
-            //                 return L.marker(latlng, {
-            //                   pane: layer.name,
-            //                   icon: app.icons.test2
-            //                 });
-            //               },
-            //               iconCreateFunction: function iconCreateFunction(cluster) {
-            //                 return L.divIcon({
-            //                   html: '<div style="' + markerHtmlStyle + '; margin-left: -10px; margin-top: -10px; ">\n            <span> ' + cluster.getChildCount() + '</span></div>',
-            //                   className: 'marker-cluster',
-            //                   popupAnchor: [0, -15]
-            //                 });
-            //               },
-            //               polygonOptions: {
-            //                 pane: 'cluster-polygons',
-            //                 fillColor: "#4c9e4c",
-            //                 color: "#4c9e4c",
-            //                 weight: 0,
-            //                 opacity: 0,
-            //                 fillOpacity: 0.5
-            //               }
-
-            //             })
-            //             // check for popup
-            //             if(layer.popup) {
-            //               layer.layerObject.bindPopup(function(e){
-            //                 return L.Util.template(layer.popup, e.feature.properties)
-            //               })
-            //             }
-            //           break;
-
             default:
               // default base/shape/point layer
 
               switch (layer.type) {
                 case 'base':
-                  _this.leafletMap.createPane(layer.name);
-                  _this.leafletMap.getPane(layer.name).style.zIndex = _this.appSettings.customTileZBase + layer.z;
+                  _this2.leafletMap.createPane(layer.name);
+                  _this2.leafletMap.getPane(layer.name).style.zIndex = _this2.appSettings.customTileZBase + layer.z;
                   layer.layerObject = L.tileLayer(layer.url, {
                     pane: layer.name,
                     attribution: 'Map tiles by <a href="https://ordnancesurvey.co.uk">Ordnance Survey</a>',
                     useCache: true,
                     opacity: 1,
-                    maxZoom: _this.appSettings.mapMaxZoom,
-                    minZoom: _this.appSettings.mapMinZoom
+                    maxZoom: _this2.appSettings.mapMaxZoom,
+                    minZoom: _this2.appSettings.mapMinZoom
                   });
 
                   // set opacity if specific setting configured
@@ -1685,16 +1643,16 @@ var app = new Vue({
                   break;
 
                 case 'tile':
-                  _this.leafletMap.createPane(layer.name);
-                  _this.leafletMap.getPane(layer.name).style.zIndex = _this.appSettings.customTileZBase + layer.z;
+                  _this2.leafletMap.createPane(layer.name);
+                  _this2.leafletMap.getPane(layer.name).style.zIndex = _this2.appSettings.customTileZBase + layer.z;
                   layer.layerObject = L.tileLayer(layer.url, {
                     // crossOrigin: 'use-credentials',
                     pane: layer.name,
                     attribution: '',
                     useCache: true,
                     opacity: 1,
-                    maxZoom: _this.appSettings.mapMaxZoom,
-                    minZoom: _this.appSettings.mapMinZoom
+                    maxZoom: _this2.appSettings.mapMaxZoom,
+                    minZoom: _this2.appSettings.mapMinZoom
                   });
 
                   // set opacity if specific setting configured
@@ -1703,13 +1661,13 @@ var app = new Vue({
                   }
 
                   // get layer legend JSON (if needed)
-                  _this.requestEsriLayerLegendJSON(layer);
+                  _this2.requestEsriLayerLegendJSON(layer);
 
                   break;
 
                 case 'esriimage':
-                  _this.leafletMap.createPane(layer.name);
-                  _this.leafletMap.getPane(layer.name).style.zIndex = _this.appSettings.customTileZBase + layer.z;
+                  _this2.leafletMap.createPane(layer.name);
+                  _this2.leafletMap.getPane(layer.name).style.zIndex = _this2.appSettings.customTileZBase + layer.z;
                   layer.layerObject = L.esri.imageMapLayer({
                     url: layer.url,
                     // crossOrigin: 'use-credentials',
@@ -1717,8 +1675,8 @@ var app = new Vue({
                     attribution: '',
                     useCache: false,
                     opacity: 1,
-                    maxZoom: _this.appSettings.mapMaxZoom,
-                    minZoom: _this.appSettings.mapMinZoom
+                    maxZoom: _this2.appSettings.mapMaxZoom,
+                    minZoom: _this2.appSettings.mapMinZoom
                   });
 
                   // set opacity if specific setting configured
@@ -1728,9 +1686,9 @@ var app = new Vue({
                   break;
 
                 case 'shape':
-                  _this.leafletMap.createPane(layer.name);
-                  _this.leafletMap.getPane(layer.name).style.zIndex = _this.appSettings.customShapeZBase + layer.z;
-                  _this.leafletMap.getPane(layer.name).class = layer.name;
+                  _this2.leafletMap.createPane(layer.name);
+                  _this2.leafletMap.getPane(layer.name).style.zIndex = _this2.appSettings.customShapeZBase + layer.z;
+                  _this2.leafletMap.getPane(layer.name).class = layer.name;
 
                   var whereStr = null;
                   if (layer.where != '' && layer.where != null) {
@@ -1757,10 +1715,11 @@ var app = new Vue({
 
                       feature.properties.sitename;
                       return {
-                        color: '#000',
+                        color: layer.color ? layer.color : '#fff',
+                        fillColor: layer.color ? layer.color : '#fff',
                         weight: 1.5,
                         opacity: 1,
-                        fillOpacity: 0.0,
+                        fillOpacity: layer.opacity ? layer.opacity : 1,
                         className: layer.name + additonalClassString // layer name and added class strings
                       };
                     }
@@ -1774,7 +1733,7 @@ var app = new Vue({
                   // set opacity if specific setting configured
                   if (layer.opacity != null && layer.opacity >= 0) {
                     // setting containing pane opacity, not features diectly
-                    _this.leafletMap.getPane(layer.name).style.opacity = layer.opacity;
+                    _this2.leafletMap.getPane(layer.name).style.opacity = layer.opacity;
                   }
 
                   // generic custom click handler
@@ -1794,9 +1753,9 @@ var app = new Vue({
                   break;
 
                 case 'geojson':
-                  _this.leafletMap.createPane(layer.name);
-                  _this.leafletMap.getPane(layer.name).style.zIndex = _this.appSettings.customShapeZBase + layer.z;
-                  _this.leafletMap.getPane(layer.name).class = layer.name;
+                  _this2.leafletMap.createPane(layer.name);
+                  _this2.leafletMap.getPane(layer.name).style.zIndex = _this2.appSettings.customShapeZBase + layer.z;
+                  _this2.leafletMap.getPane(layer.name).class = layer.name;
 
                   var whereStr = null;
                   if (layer.where != '' && layer.where != null) {
@@ -1833,7 +1792,7 @@ var app = new Vue({
                   // set opacity if specific setting configured
                   if (layer.opacity != null && layer.opacity >= 0) {
                     // setting containing pane opacity, not features diectly
-                    _this.leafletMap.getPane(layer.name).style.opacity = layer.opacity;
+                    _this2.leafletMap.getPane(layer.name).style.opacity = layer.opacity;
                   }
 
                   // generic custom click handler
@@ -1853,9 +1812,9 @@ var app = new Vue({
                   break;
 
                 case 'point':
-                  var markerHtmlStyle = 'background-image: url(' + _this.getLayerIconUrl(layer) + '); background-repeat: no-repeat background-size: contain;';
-                  _this.leafletMap.createPane(layer.name);
-                  _this.leafletMap.getPane(layer.name).style.zIndex = _this.appSettings.customPointZBase + layer.z;
+                  var markerHtmlStyle = 'background-image: url(' + _this2.getLayerIconUrl(layer) + '); background-repeat: no-repeat background-size: contain;';
+                  _this2.leafletMap.createPane(layer.name);
+                  _this2.leafletMap.getPane(layer.name).style.zIndex = _this2.appSettings.customPointZBase + layer.z;
 
                   var whereStr = null;
                   if (layer.where != '' && layer.where != null) {
@@ -1888,7 +1847,7 @@ var app = new Vue({
                     },
                     polygonOptions: {
                       pane: 'cluster-polygons',
-                      fillColor: _this.getLayerColor(layer),
+                      fillColor: _this2.getLayerColor(layer),
                       // color: this.getLayerColor(layer),
                       weight: 0,
                       opacity: 0,
@@ -1905,7 +1864,7 @@ var app = new Vue({
                   // set opacity if specific setting configured
                   if (layer.opacity != null && layer.opacity >= 0) {
                     // setting containing pane opacity, not features diectly
-                    _this.leafletMap.getPane(layer.name).style.opacity = layer.opacity;
+                    _this2.leafletMap.getPane(layer.name).style.opacity = layer.opacity;
                   }
 
                   // generic custom click handler
@@ -1924,8 +1883,8 @@ var app = new Vue({
                   break;
 
                 case 'os-vector-tile':
-                  _this.leafletMap.createPane(layer.name);
-                  _this.leafletMap.getPane(layer.name).style.zIndex = _this.appSettings.customTileZBase + layer.z;
+                  _this2.leafletMap.createPane(layer.name);
+                  _this2.leafletMap.getPane(layer.name).style.zIndex = _this2.appSettings.customTileZBase + layer.z;
 
                   var apiKey = layer.apiKey; //'vmRzM4mAA1Ag0hkjGh1fhA2hNLEM6PYP';
                   var customStyleURL = layer.customStyleUrl; //'data/OS_VTS_3857_Open_GLA_Dark_Greyscale_GLA_Muted_Buildings.json';
@@ -2054,6 +2013,7 @@ var app = new Vue({
       });
     },
     layerActiveChanged: function layerActiveChanged(lyrgrp, lyr, isActive) {
+      console.log(lyr);
       lyr.active = isActive;
       // need to decide if 'parent' group of layer should be active, as result of child layer activation
       if (isActive && !lyrgrp.active) {
@@ -2086,19 +2046,19 @@ var app = new Vue({
       }
     },
     updateLayersView: function updateLayersView() {
-      var _this2 = this;
+      var _this3 = this;
 
       this.layerGroups.forEach(function (layerGroup, index) {
         // using arrow here to keep app scope for this
         // loop through layers array, checking if they should be displayed still, and if they already are/not
         layerGroup.layers.forEach(function (layer, index) {
           // using arrow here to keep app scope for this
-          if (layerGroup.active && layer.active && !_this2.leafletMap.hasLayer(layer.layerObject)) {
+          if (layerGroup.active && layer.active && !_this3.leafletMap.hasLayer(layer.layerObject)) {
             // if should have layer, but no on -> add
-            layer.layerObject.addTo(_this2.leafletMap);
-          } else if (!layer.active && _this2.leafletMap.hasLayer(layer.layerObject) || !layerGroup.active) {
+            layer.layerObject.addTo(_this3.leafletMap);
+          } else if (!layer.active && _this3.leafletMap.hasLayer(layer.layerObject) || !layerGroup.active) {
             // if shouldn't have layer, but IS on -> remove
-            layer.layerObject.removeFrom(_this2.leafletMap);
+            layer.layerObject.removeFrom(_this3.leafletMap);
           }
         });
       });
@@ -2236,6 +2196,15 @@ var app = new Vue({
           lyr.layerObject.setOpacity(lyr.opacity);
         }
       }
+    },
+    layerColorChanged: function layerColorChanged(layer, hex) {
+      // document
+      //   .querySelectorAll('.leaflet-' + layer.name + '-pane svg path')
+      //   .forEach(el => (el.style.fill = value))
+      layer.layerObject.setStyle({
+        color: hex,
+        fillColor: hex
+      });
     },
     togglePanelOpen: function togglePanelOpen() {
       this.appState.panelOpen = !this.appState.panelOpen;
@@ -2624,14 +2593,14 @@ var app = new Vue({
       }
     },
     initPointSearchableList: function initPointSearchableList() {
-      var _this3 = this;
+      var _this4 = this;
 
       this.layerGroups.forEach(function (layerGroup, index) {
         // using arrow here to keep app scope for this
         layerGroup.layers.forEach(function (layer, index) {
           // using arrow here to keep app scope for this
           if (layer.pointSearchable == true) {
-            _this3.appState.pointSearchableLayers.push(layer.id);
+            _this4.appState.pointSearchableLayers.push(layer.id);
           }
         });
       });
@@ -2639,7 +2608,7 @@ var app = new Vue({
       this.appState.pointSearchableLayers = _.uniq(this.appState.pointSearchableLayers);
     },
     initPointSearchQueries: function initPointSearchQueries() {
-      var _this4 = this;
+      var _this5 = this;
 
       // loop through each layer
       this.layerGroups.forEach(function (layerGroup, index) {
@@ -2649,7 +2618,7 @@ var app = new Vue({
           // if searchable layer
           if (layer.pointSearchable == true) {
             // get layer's root server URL (using our known end string)
-            var requestURL = _this4.getURLRoot(layer.url, 'MapServer/');
+            var requestURL = _this5.getURLRoot(layer.url, 'MapServer/');
             // if found a valid "root URL" (that we know we can query)
             if (requestURL != null) {
               // check type of layer
@@ -2657,8 +2626,8 @@ var app = new Vue({
                 // is a "feature"
                 // check is already in pointSearchQueries
                 var urlInQueriesPos = -1;
-                for (var q = 0; q < _this4.appState.pointSearchQueries.length; q++) {
-                  if (requestURL == _this4.appState.pointSearchQueries[q].url) {
+                for (var q = 0; q < _this5.appState.pointSearchQueries.length; q++) {
+                  if (requestURL == _this5.appState.pointSearchQueries[q].url) {
                     urlInQueriesPos = q;
                     break;
                   }
@@ -2671,9 +2640,9 @@ var app = new Vue({
                     ids: layer.id,
                     type: 'feature'
                   };
-                  _this4.appState.pointSearchQueries.push(newQueryObj);
+                  _this5.appState.pointSearchQueries.push(newQueryObj);
                 } else {
-                  _this4.appState.pointSearchQueries[urlInQueriesPos].ids += ',' + layer.id;
+                  _this5.appState.pointSearchQueries[urlInQueriesPos].ids += ',' + layer.id;
                 }
               } else if (layer.type == 'tile') {
                 // is a tile
@@ -2683,7 +2652,7 @@ var app = new Vue({
                   ids: layer.id,
                   type: 'tile'
                 };
-                _this4.appState.pointSearchQueries.push(newQueryObj);
+                _this5.appState.pointSearchQueries.push(newQueryObj);
               }
             }
           }
@@ -2836,7 +2805,7 @@ var app = new Vue({
       return foundLayer;
     },
     hideAllPointSearchableLayers: function hideAllPointSearchableLayers() {
-      var _this5 = this;
+      var _this6 = this;
 
       this.layerGroups.forEach(function (layerGroup, index) {
         // using arrow here to keep app scope for this
@@ -2844,7 +2813,7 @@ var app = new Vue({
         layerGroup.layers.forEach(function (layer, index) {
           // using arrow here to keep app scope for this
           if (layer.pointSearchable == true) {
-            _this5.layerActiveChanged(thisLayerGroup, layer, false);
+            _this6.layerActiveChanged(thisLayerGroup, layer, false);
           }
         });
       });

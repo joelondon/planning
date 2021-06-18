@@ -109,6 +109,14 @@
 
     <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.11/lodash.min.js"></script>
 
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/vue-swatches/dist/vue-swatches.css"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/vue-swatches"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/vue-color"></script>
+
     <!-- type -->
     <link
       href="//fonts.googleapis.com/css?family=Roboto:300,400,400i,500,700"
@@ -116,10 +124,10 @@
     />
 
     <!-- GULP BUILD FOR BROWSER TIMESTAMP TO REPLACE CACHE -->
-    <link rel="stylesheet" href="css/style.css?release=1623837275223">
+    <link rel="stylesheet" href="css/style.css?release=1624021452923">
 
     <!-- GULP BUILD FOR REPOINTING TO BABELIFIED STATIC FILE AND ADD BROWSER TIMESTAMP TO REPLACE CACHE -->
-    <script src="js/app.js?release=1623837275223" defer></script>
+    <script src="js/app.js?release=1624021452923" defer></script>
   </head>
   <body>
     <div
@@ -254,6 +262,7 @@
                 v-on:request-more-info="layerRequestMoreInfo"
                 v-on:request-group-more-info="layerRequestGroupMoreInfo"
                 v-on:opacity-changed="layerOpacityChanged"
+                v-on:color-changed="layerColorChanged"
                 v-on:group-active-changed="layerGroupActiveChanged"
               ></layer-group-control>
               <!--                       <div class="clearFloat"></div> -->
