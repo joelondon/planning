@@ -1101,6 +1101,26 @@ var app = new Vue({
         clickZoomToFeature: true,
         pointSearchable: true,
         layerObject: null
+      }, {
+        id: 21,
+        type: 'shape',
+        name: 'planning_blp_barking_and_daenham_02a',
+        displayName: 'planning_blp_barking_and_daenham_02a',
+        shortDescription: 'planning_blp_barking_and_daenham_02a',
+        longDescription: 'planning_blp_barking_and_daenham_02a',
+        z: 5,
+        url: 'https://gis.london.gov.uk/arcgis/rest/services/apps/planning_blp_barking_and_daenham_02/MapServer/2',
+        appendIDtoURL: false,
+        active: true,
+        swatches: ['#8dd3c7', '#ffffb3', '#bebada', '#fb8072', '#80b1d3', '#fdb462', '#ffffff'],
+        color: '#ffffff',
+        opacity: 1,
+        userControl: true,
+        popup: '<p><strong>{designation}:</strong><br>{sitename}</p>',
+        clickCustomFunction: true,
+        clickZoomToFeature: true,
+        pointSearchable: true,
+        layerObject: null
       }]
     }, {
       id: 3,
@@ -1174,6 +1194,26 @@ var app = new Vue({
         longDescription: 'planning_blp_brent_05',
         z: 5,
         url: 'https://gis.london.gov.uk/arcgis/rest/services/apps/planning_blp_brent_05/MapServer/0',
+        appendIDtoURL: false,
+        active: true,
+        swatches: ['#8dd3c7', '#ffffb3', '#bebada', '#fb8072', '#80b1d3', '#fdb462', '#ffffff'],
+        color: '#ffffff',
+        opacity: 1,
+        userControl: true,
+        popup: '<p><strong>{designation}:</strong><br>{sitename}</p>',
+        clickCustomFunction: true,
+        clickZoomToFeature: true,
+        pointSearchable: true,
+        layerObject: null
+      }, {
+        id: 51,
+        type: 'shape',
+        name: 'planning_blp_brent_05na',
+        displayName: 'planning_blp_brent_05ona',
+        shortDescription: 'planning_blp_brent_05reasa',
+        longDescription: 'planning_blp_brent_05a',
+        z: 5,
+        url: 'https://gis.london.gov.uk/arcgis/rest/services/apps/planning_blp_brent_05/MapServer/1',
         appendIDtoURL: false,
         active: true,
         swatches: ['#8dd3c7', '#ffffb3', '#bebada', '#fb8072', '#80b1d3', '#fdb462', '#ffffff'],
@@ -2881,7 +2921,6 @@ var app = new Vue({
       });
     },
     layerActiveChanged: function layerActiveChanged(lyrgrp, lyr, isActive) {
-      console.log(lyr);
       lyr.active = isActive;
       // need to decide if 'parent' group of layer should be active, as result of child layer activation
       if (isActive && !lyrgrp.active) {
