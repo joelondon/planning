@@ -3225,9 +3225,22 @@ var app = new Vue({
         }
 
         // using "identify" search of entire map service
-        var request = this.appState.pointSearchQueries[q].url + 'identify?geometry=' + JSON.stringify(esriSearchPolygon) + '&geometryType=esriGeometryPolygon&sr=4326' + layersQueryStr + '&layerDefs=&time=&layerTimeOptions=&tolerance=' + identifyTolerancePX + '&mapExtent=' + currentExtentQueryString + '&imageDisplay=' + currentWindowWidth + '%2C' + currentWindowHeight + '%2C' + dpi + '&returnGeometry=false&maxAllowableOffset=&geometryPrecision=&dynamicLayers=&returnZ=false&returnM=false&gdbVersion=&returnUnformattedValues=false&returnFieldName=false&datumTransformations=&layerParameterValues=&mapRangeValues=&layerRangeValues=&f=pjson';
+        var request = this.appState.pointSearchQueries[q].url + 'identify?geometry=' + encodeURIComponent(JSON.stringify(esriSearchPolygon)) + '&geometryType=esriGeometryPolygon&sr=4326&layers=all:101,103,104,106,107,108,102,109,111,112,113,210,211,212,202,203,205,217,206,207,208,218,219,214,209,215,216,220,105,304,306,307&tolerance=0&mapExtent=-0.24649530183523896%252C51.35333777116816%252C0.2732953475788236%252C51.64912166330705&imageDisplay=757,692,96&returnGeometry=false&returnZ=false&returnM=false&historicMoment=&returnUnformattedValues=false&returnFieldName=false&f=json';
+        // '&geometryType=esriGeometryPolygon&sr=4326' +
+        // // layersQueryStr +
+        // // '&layerDefs=&time=&layerTimeOptions=
+        // '&tolerance=' +
+        // identifyTolerancePX +
+        // '&mapExtent=' +
+        // currentExtentQueryString +
+        // '&imageDisplay=' +
+        // currentWindowWidth +
+        // '%2C' +
+        // currentWindowHeight +
+        // '%2C' +
+        // dpi +
+        // '&returnGeometry=false&maxAllowableOffset=&geometryPrecision=&dynamicLayers=&returnZ=false&returnM=false&gdbVersion=&returnUnformattedValues=false&returnFieldName=false&datumTransformations=&layerParameterValues=&mapRangeValues=&layerRangeValues=&f=pjson'
 
-        // console.log(request)
         axios.get(request, {
           params: {
             pointSearchQueryID: q
